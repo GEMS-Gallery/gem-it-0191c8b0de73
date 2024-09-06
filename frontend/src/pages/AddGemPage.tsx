@@ -2,12 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { backend } from '../../declarations/backend';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 interface FormData {
   title: string;
   description: string;
   url: string;
+  category: string;
 }
 
 const AddGemPage: React.FC = () => {
@@ -16,7 +17,7 @@ const AddGemPage: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const result = await backend.addGem(data.title, [data.description], data.url);
+      const result = await backend.addGem(data.title, [data.description], data.url, data.category);
       if ('ok' in result) {
         navigate('/');
       } else {
@@ -78,6 +79,21 @@ const AddGemPage: React.FC = () => {
               error={!!error}
               helperText={error?.message}
             />
+          )}
+        />
+        <Controller
+          name="category"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Category is required' }}
+          render={({ field }) => (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Category</InputLabel>
+              <Select {...field} label="Category">
+                <MenuItem value="Brazil">Brazil</MenuItem>
+                <MenuItem value="Africa">Africa</MenuItem>
+              </Select>
+            </FormControl>
           )}
         />
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>

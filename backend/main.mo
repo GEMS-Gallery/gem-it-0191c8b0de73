@@ -1,3 +1,4 @@
+import Bool "mo:base/Bool";
 import Hash "mo:base/Hash";
 import Nat "mo:base/Nat";
 
@@ -10,6 +11,11 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 actor {
+  type GemCategory = {
+    #Brazil;
+    #Africa;
+  };
+
   type Gem = {
     id: Nat;
     title: Text;
@@ -18,13 +24,19 @@ actor {
     upvotes: Nat;
     downvotes: Nat;
     timestamp: Int;
+    category: GemCategory;
   };
 
   stable var nextGemId: Nat = 0;
   let gems = HashMap.HashMap<Nat, Gem>(10, Int.equal, Int.hash);
 
-  public func addGem(title: Text, description: ?Text, url: Text) : async Result.Result<Nat, Text> {
+  public func addGem(title: Text, description: ?Text, url: Text, category: Text) : async Result.Result<Nat, Text> {
     let id = nextGemId;
+    let gemCategory = switch (category) {
+      case ("Brazil") #Brazil;
+      case ("Africa") #Africa;
+      case (_) return #err("Invalid category");
+    };
     let gem: Gem = {
       id;
       title;
@@ -33,6 +45,7 @@ actor {
       upvotes = 0;
       downvotes = 0;
       timestamp = Time.now();
+      category = gemCategory;
     };
     gems.put(id, gem);
     nextGemId += 1;
@@ -41,6 +54,20 @@ actor {
 
   public query func getGems() : async [Gem] {
     Iter.toArray(gems.vals())
+  };
+
+  public query func getGemsByCategory(category: Text) : async [Gem] {
+    let gemCategory = switch (category) {
+      case ("Brazil") ?#Brazil;
+      case ("Africa") ?#Africa;
+      case (_) null;
+    };
+    switch (gemCategory) {
+      case (null) [];
+      case (?cat) {
+        Iter.toArray(Iter.filter(gems.vals(), func (gem: Gem) : Bool { gem.category == cat }))
+      };
+    }
   };
 
   public query func getGem(id: Nat) : async ?Gem {
@@ -59,6 +86,7 @@ actor {
           upvotes = gem.upvotes + 1;
           downvotes = gem.downvotes;
           timestamp = gem.timestamp;
+          category = gem.category;
         };
         gems.put(id, updatedGem);
         #ok()
@@ -78,10 +106,15 @@ actor {
           upvotes = gem.upvotes;
           downvotes = gem.downvotes + 1;
           timestamp = gem.timestamp;
+          category = gem.category;
         };
         gems.put(id, updatedGem);
         #ok()
       };
     }
+  };
+
+  public query func getCategories() : async [Text] {
+    ["Brazil", "Africa"]
   };
 }

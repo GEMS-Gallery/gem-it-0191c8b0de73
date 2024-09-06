@@ -7,6 +7,7 @@ import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import AddGemPage from './pages/AddGemPage';
 import GemDetailsPage from './pages/GemDetailsPage';
+import CategoryPage from './pages/CategoryPage';
 
 const theme = createTheme({
   palette: {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/add" element={<AddGemPage />} />
           <Route path="/gem/:id" element={<GemDetailsPage />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
       </Container>
     </ThemeProvider>

@@ -20,6 +20,12 @@ const Header: React.FC = () => {
         <Button color="inherit" component={RouterLink} to="/add">
           Add Gem
         </Button>
+        <Button color="inherit" component={RouterLink} to="/category/Brazil">
+          Brazil Gems
+        </Button>
+        <Button color="inherit" component={RouterLink} to="/category/Africa">
+          Africa Gems
+        </Button>
       </Toolbar>
     </AppBar>
   );

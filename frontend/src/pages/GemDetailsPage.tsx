@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { backend } from '../../declarations/backend';
-import { Box, Typography, Link, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Link, Button, CircularProgress, Chip } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
@@ -13,6 +13,7 @@ interface Gem {
   upvotes: bigint;
   downvotes: bigint;
   timestamp: bigint;
+  category: { Brazil: null } | { Africa: null };
 }
 
 const GemDetailsPage: React.FC = () => {
@@ -52,6 +53,12 @@ const GemDetailsPage: React.FC = () => {
     }
   };
 
+  const getCategoryName = (category: { Brazil: null } | { Africa: null }): string => {
+    if ('Brazil' in category) return 'Brazil';
+    if ('Africa' in category) return 'Africa';
+    return 'Unknown';
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -65,6 +72,7 @@ const GemDetailsPage: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         {gem.title}
       </Typography>
+      <Chip label={getCategoryName(gem.category)} color="primary" sx={{ mb: 2 }} />
       <Typography variant="body1" paragraph>
         {gem.description}
       </Typography>

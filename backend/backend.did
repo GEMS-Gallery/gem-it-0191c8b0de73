@@ -8,8 +8,14 @@ type Result =
    err: text;
    ok;
  };
+type GemCategory = 
+ variant {
+   Africa;
+   Brazil;
+ };
 type Gem = 
  record {
+   category: GemCategory;
    description: opt text;
    downvotes: nat;
    id: nat;
@@ -19,9 +25,11 @@ type Gem =
    url: text;
  };
 service : {
-  addGem: (text, opt text, text) -> (Result_1);
+  addGem: (text, opt text, text, text) -> (Result_1);
   downvoteGem: (nat) -> (Result);
+  getCategories: () -> (vec text) query;
   getGem: (nat) -> (opt Gem) query;
   getGems: () -> (vec Gem) query;
+  getGemsByCategory: (text) -> (vec Gem) query;
   upvoteGem: (nat) -> (Result);
 }
