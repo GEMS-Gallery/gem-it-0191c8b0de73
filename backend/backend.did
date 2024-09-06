@@ -1,0 +1,27 @@
+type Result_1 = 
+ variant {
+   err: text;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
+ };
+type Gem = 
+ record {
+   description: opt text;
+   downvotes: nat;
+   id: nat;
+   timestamp: int;
+   title: text;
+   upvotes: nat;
+   url: text;
+ };
+service : {
+  addGem: (text, opt text, text) -> (Result_1);
+  downvoteGem: (nat) -> (Result);
+  getGem: (nat) -> (opt Gem) query;
+  getGems: () -> (vec Gem) query;
+  upvoteGem: (nat) -> (Result);
+}
