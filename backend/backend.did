@@ -14,6 +14,18 @@ type PriceCategory =
    Low;
    Medium;
  };
+type NFT = 
+ record {
+   id: nat;
+   metadata: Metadata;
+   owner: Account;
+ };
+type Metadata = 
+ record {
+   description: opt text;
+   image: opt text;
+   name: text;
+ };
 type Gem = 
  record {
    category: variant {
@@ -26,19 +38,27 @@ type Gem =
    downvotes: nat;
    id: nat;
    imageUrl: opt text;
+   nftId: opt nat;
    priceCategory: PriceCategory;
    timestamp: int;
    title: text;
    upvotes: nat;
    url: text;
  };
+type Account = 
+ record {
+   owner: principal;
+   subaccount: opt vec nat8;
+ };
 service : {
   addGem: (text, opt text, text, text, text, text, text, opt text) ->
    (Result_1);
+  createNFT: (nat) -> (Result_1);
   downvoteGem: (nat) -> (Result);
   getCategories: () -> (vec text) query;
   getGem: (nat) -> (opt Gem) query;
   getGems: () -> (vec Gem) query;
   getGemsByCategory: (text) -> (vec Gem) query;
+  getNFT: (nat) -> (opt NFT) query;
   upvoteGem: (nat) -> (Result);
 }

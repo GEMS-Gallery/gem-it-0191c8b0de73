@@ -4,6 +4,7 @@ import { backend } from '../../declarations/backend';
 import { Grid, Card, CardContent, Typography, Button, CircularProgress, Chip, CardMedia } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import TokenIcon from '@mui/icons-material/Token';
 
 interface Gem {
   id: bigint;
@@ -18,6 +19,7 @@ interface Gem {
   priceCategory: { High: null } | { Medium: null } | { Low: null };
   countryOfOrigin: string;
   imageUrl: string | null;
+  nftId: bigint | null;
 }
 
 const HomePage: React.FC = () => {
@@ -49,6 +51,20 @@ const HomePage: React.FC = () => {
       fetchGems();
     } catch (error) {
       console.error('Error voting:', error);
+    }
+  };
+
+  const handleCreateNFT = async (id: bigint) => {
+    try {
+      const result = await backend.createNFT(id);
+      if ('ok' in result) {
+        console.log('NFT created with ID:', result.ok);
+        fetchGems();
+      } else {
+        console.error('Error creating NFT:', result.err);
+      }
+    } catch (error) {
+      console.error('Error creating NFT:', error);
     }
   };
 
@@ -115,6 +131,24 @@ const HomePage: React.FC = () => {
               >
                 {gem.downvotes.toString()}
               </Button>
+              {gem.nftId ? (
+                <Chip
+                  icon={<TokenIcon />}
+                  label={`NFT: ${gem.nftId.toString()}`}
+                  color="secondary"
+                  size="small"
+                  sx={{ mt: 1 }}
+                />
+              ) : (
+                <Button
+                  size="small"
+                  startIcon={<TokenIcon />}
+                  onClick={() => handleCreateNFT(gem.id)}
+                  sx={{ mt: 1 }}
+                >
+                  Create NFT
+                </Button>
+              )}
             </CardContent>
           </Card>
         </Grid>
