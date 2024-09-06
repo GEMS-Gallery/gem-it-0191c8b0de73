@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { backend } from '../../declarations/backend';
@@ -9,15 +9,29 @@ interface FormData {
   description: string;
   url: string;
   category: string;
+  color: string;
+  priceCategory: string;
+  countryOfOrigin: string;
+  imageUrl: string;
 }
 
 const AddGemPage: React.FC = () => {
   const navigate = useNavigate();
   const { control, handleSubmit } = useForm<FormData>();
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const onSubmit = async (data: FormData) => {
     try {
-      const result = await backend.addGem(data.title, [data.description], data.url, data.category);
+      const result = await backend.addGem(
+        data.title,
+        [data.description],
+        data.url,
+        data.category,
+        data.color,
+        data.priceCategory,
+        data.countryOfOrigin,
+        [imageUrl]
+      );
       if ('ok' in result) {
         navigate('/');
       } else {
@@ -25,6 +39,17 @@ const AddGemPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error adding gem:', error);
+    }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -96,6 +121,71 @@ const AddGemPage: React.FC = () => {
             </FormControl>
           )}
         />
+        <Controller
+          name="color"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Color is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Color"
+              fullWidth
+              margin="normal"
+              error={!!error}
+              helperText={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="priceCategory"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Price Category is required' }}
+          render={({ field }) => (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Price Category</InputLabel>
+              <Select {...field} label="Price Category">
+                <MenuItem value="High">High</MenuItem>
+                <MenuItem value="Medium">Medium</MenuItem>
+                <MenuItem value="Low">Low</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+        />
+        <Controller
+          name="countryOfOrigin"
+          control={control}
+          defaultValue=""
+          rules={{ required: 'Country of Origin is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Country of Origin"
+              fullWidth
+              margin="normal"
+              error={!!error}
+              helperText={error?.message}
+            />
+          )}
+        />
+        <input
+          accept="image/*"
+          style={{ display: 'none' }}
+          id="raised-button-file"
+          type="file"
+          onChange={handleImageUpload}
+        />
+        <label htmlFor="raised-button-file">
+          <Button variant="contained" component="span" sx={{ mt: 2, mb: 2 }}>
+            Upload Image
+          </Button>
+        </label>
+        {imageUrl && (
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <img src={imageUrl} alt="Uploaded gem" style={{ maxWidth: '100%', maxHeight: '200px' }} />
+          </Box>
+        )}
         <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
           Add Gem
         </Button>

@@ -11,9 +11,10 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 
 actor {
-  type GemCategory = {
-    #Brazil;
-    #Africa;
+  type PriceCategory = {
+    #High;
+    #Medium;
+    #Low;
   };
 
   type Gem = {
@@ -24,18 +25,28 @@ actor {
     upvotes: Nat;
     downvotes: Nat;
     timestamp: Int;
-    category: GemCategory;
+    category: { #Brazil; #Africa };
+    color: Text;
+    priceCategory: PriceCategory;
+    countryOfOrigin: Text;
+    imageUrl: ?Text;
   };
 
   stable var nextGemId: Nat = 0;
   let gems = HashMap.HashMap<Nat, Gem>(10, Int.equal, Int.hash);
 
-  public func addGem(title: Text, description: ?Text, url: Text, category: Text) : async Result.Result<Nat, Text> {
+  public func addGem(title: Text, description: ?Text, url: Text, category: Text, color: Text, priceCategory: Text, countryOfOrigin: Text, imageUrl: ?Text) : async Result.Result<Nat, Text> {
     let id = nextGemId;
     let gemCategory = switch (category) {
       case ("Brazil") #Brazil;
       case ("Africa") #Africa;
       case (_) return #err("Invalid category");
+    };
+    let gemPriceCategory = switch (priceCategory) {
+      case ("High") #High;
+      case ("Medium") #Medium;
+      case ("Low") #Low;
+      case (_) return #err("Invalid price category");
     };
     let gem: Gem = {
       id;
@@ -46,6 +57,10 @@ actor {
       downvotes = 0;
       timestamp = Time.now();
       category = gemCategory;
+      color;
+      priceCategory = gemPriceCategory;
+      countryOfOrigin;
+      imageUrl;
     };
     gems.put(id, gem);
     nextGemId += 1;
@@ -87,6 +102,10 @@ actor {
           downvotes = gem.downvotes;
           timestamp = gem.timestamp;
           category = gem.category;
+          color = gem.color;
+          priceCategory = gem.priceCategory;
+          countryOfOrigin = gem.countryOfOrigin;
+          imageUrl = gem.imageUrl;
         };
         gems.put(id, updatedGem);
         #ok()
@@ -107,6 +126,10 @@ actor {
           downvotes = gem.downvotes + 1;
           timestamp = gem.timestamp;
           category = gem.category;
+          color = gem.color;
+          priceCategory = gem.priceCategory;
+          countryOfOrigin = gem.countryOfOrigin;
+          imageUrl = gem.imageUrl;
         };
         gems.put(id, updatedGem);
         #ok()

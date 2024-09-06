@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import { backend } from '../../declarations/backend';
-import { Grid, Card, CardContent, Typography, Button, CircularProgress, Chip } from '@mui/material';
+import { Grid, Card, CardContent, Typography, Button, CircularProgress, Chip, CardMedia } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
@@ -14,6 +14,10 @@ interface Gem {
   downvotes: bigint;
   timestamp: bigint;
   category: { Brazil: null } | { Africa: null };
+  color: string;
+  priceCategory: { High: null } | { Medium: null } | { Low: null };
+  countryOfOrigin: string;
+  imageUrl: string | null;
 }
 
 const CategoryPage: React.FC = () => {
@@ -50,6 +54,13 @@ const CategoryPage: React.FC = () => {
     }
   };
 
+  const getPriceCategoryName = (priceCategory: { High: null } | { Medium: null } | { Low: null }): string => {
+    if ('High' in priceCategory) return 'High';
+    if ('Medium' in priceCategory) return 'Medium';
+    if ('Low' in priceCategory) return 'Low';
+    return 'Unknown';
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -63,6 +74,14 @@ const CategoryPage: React.FC = () => {
         {gems.map((gem) => (
           <Grid item xs={12} sm={6} md={4} key={gem.id.toString()}>
             <Card>
+              {gem.imageUrl && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={gem.imageUrl}
+                  alt={gem.title}
+                />
+              )}
               <CardContent>
                 <Typography variant="h6" component="div">
                   {gem.title}
@@ -70,6 +89,9 @@ const CategoryPage: React.FC = () => {
                 <Typography variant="body2" color="text.secondary">
                   {gem.description}
                 </Typography>
+                <Chip label={gem.color} size="small" sx={{ mt: 1, mb: 1, mr: 1 }} />
+                <Chip label={getPriceCategoryName(gem.priceCategory)} size="small" sx={{ mt: 1, mb: 1, mr: 1 }} />
+                <Chip label={gem.countryOfOrigin} size="small" sx={{ mt: 1, mb: 1 }} />
                 <Button
                   size="small"
                   color="primary"

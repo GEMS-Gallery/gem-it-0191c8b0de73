@@ -8,24 +8,33 @@ type Result =
    err: text;
    ok;
  };
-type GemCategory = 
+type PriceCategory = 
  variant {
-   Africa;
-   Brazil;
+   High;
+   Low;
+   Medium;
  };
 type Gem = 
  record {
-   category: GemCategory;
+   category: variant {
+               Africa;
+               Brazil;
+             };
+   color: text;
+   countryOfOrigin: text;
    description: opt text;
    downvotes: nat;
    id: nat;
+   imageUrl: opt text;
+   priceCategory: PriceCategory;
    timestamp: int;
    title: text;
    upvotes: nat;
    url: text;
  };
 service : {
-  addGem: (text, opt text, text, text) -> (Result_1);
+  addGem: (text, opt text, text, text, text, text, text, opt text) ->
+   (Result_1);
   downvoteGem: (nat) -> (Result);
   getCategories: () -> (vec text) query;
   getGem: (nat) -> (opt Gem) query;

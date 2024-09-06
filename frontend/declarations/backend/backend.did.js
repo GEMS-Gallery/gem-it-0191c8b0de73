@@ -1,20 +1,37 @@
 export const idlFactory = ({ IDL }) => {
   const Result_1 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : IDL.Text });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
-  const GemCategory = IDL.Variant({ 'Africa' : IDL.Null, 'Brazil' : IDL.Null });
+  const PriceCategory = IDL.Variant({
+    'Low' : IDL.Null,
+    'High' : IDL.Null,
+    'Medium' : IDL.Null,
+  });
   const Gem = IDL.Record({
     'id' : IDL.Nat,
     'url' : IDL.Text,
     'upvotes' : IDL.Nat,
     'title' : IDL.Text,
+    'color' : IDL.Text,
     'description' : IDL.Opt(IDL.Text),
+    'imageUrl' : IDL.Opt(IDL.Text),
+    'countryOfOrigin' : IDL.Text,
     'timestamp' : IDL.Int,
-    'category' : GemCategory,
+    'category' : IDL.Variant({ 'Africa' : IDL.Null, 'Brazil' : IDL.Null }),
     'downvotes' : IDL.Nat,
+    'priceCategory' : PriceCategory,
   });
   return IDL.Service({
     'addGem' : IDL.Func(
-        [IDL.Text, IDL.Opt(IDL.Text), IDL.Text, IDL.Text],
+        [
+          IDL.Text,
+          IDL.Opt(IDL.Text),
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Opt(IDL.Text),
+        ],
         [Result_1],
         [],
       ),

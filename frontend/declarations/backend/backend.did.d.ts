@@ -7,19 +7,37 @@ export interface Gem {
   'url' : string,
   'upvotes' : bigint,
   'title' : string,
+  'color' : string,
   'description' : [] | [string],
+  'imageUrl' : [] | [string],
+  'countryOfOrigin' : string,
   'timestamp' : bigint,
-  'category' : GemCategory,
+  'category' : { 'Africa' : null } |
+    { 'Brazil' : null },
   'downvotes' : bigint,
+  'priceCategory' : PriceCategory,
 }
-export type GemCategory = { 'Africa' : null } |
-  { 'Brazil' : null };
+export type PriceCategory = { 'Low' : null } |
+  { 'High' : null } |
+  { 'Medium' : null };
 export type Result = { 'ok' : null } |
   { 'err' : string };
 export type Result_1 = { 'ok' : bigint } |
   { 'err' : string };
 export interface _SERVICE {
-  'addGem' : ActorMethod<[string, [] | [string], string, string], Result_1>,
+  'addGem' : ActorMethod<
+    [
+      string,
+      [] | [string],
+      string,
+      string,
+      string,
+      string,
+      string,
+      [] | [string],
+    ],
+    Result_1
+  >,
   'downvoteGem' : ActorMethod<[bigint], Result>,
   'getCategories' : ActorMethod<[], Array<string>>,
   'getGem' : ActorMethod<[bigint], [] | [Gem]>,

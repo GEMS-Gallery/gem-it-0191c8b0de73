@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { backend } from '../../declarations/backend';
-import { Box, Typography, Link, Button, CircularProgress, Chip } from '@mui/material';
+import { Box, Typography, Link, Button, CircularProgress, Chip, Card, CardMedia } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
@@ -14,6 +14,10 @@ interface Gem {
   downvotes: bigint;
   timestamp: bigint;
   category: { Brazil: null } | { Africa: null };
+  color: string;
+  priceCategory: { High: null } | { Medium: null } | { Low: null };
+  countryOfOrigin: string;
+  imageUrl: string | null;
 }
 
 const GemDetailsPage: React.FC = () => {
@@ -59,6 +63,13 @@ const GemDetailsPage: React.FC = () => {
     return 'Unknown';
   };
 
+  const getPriceCategoryName = (priceCategory: { High: null } | { Medium: null } | { Low: null }): string => {
+    if ('High' in priceCategory) return 'High';
+    if ('Medium' in priceCategory) return 'Medium';
+    if ('Low' in priceCategory) return 'Low';
+    return 'Unknown';
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -72,13 +83,28 @@ const GemDetailsPage: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         {gem.title}
       </Typography>
-      <Chip label={getCategoryName(gem.category)} color="primary" sx={{ mb: 2 }} />
+      {gem.imageUrl && (
+        <Card sx={{ maxWidth: 345, mb: 2 }}>
+          <CardMedia
+            component="img"
+            height="140"
+            image={gem.imageUrl}
+            alt={gem.title}
+          />
+        </Card>
+      )}
       <Typography variant="body1" paragraph>
         {gem.description}
       </Typography>
-      <Link href={gem.url} target="_blank" rel="noopener noreferrer">
-        Visit Gem
-      </Link>
+      <Chip label={getCategoryName(gem.category)} color="primary" sx={{ mr: 1, mb: 1 }} />
+      <Chip label={gem.color} sx={{ mr: 1, mb: 1 }} />
+      <Chip label={getPriceCategoryName(gem.priceCategory)} sx={{ mr: 1, mb: 1 }} />
+      <Chip label={gem.countryOfOrigin} sx={{ mb: 1 }} />
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <Link href={gem.url} target="_blank" rel="noopener noreferrer">
+          Visit Gem
+        </Link>
+      </Box>
       <Box sx={{ mt: 2 }}>
         <Button
           startIcon={<ThumbUpIcon />}
